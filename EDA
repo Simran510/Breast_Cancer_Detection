@@ -1,0 +1,85 @@
+## 🔍 Exploratory Data Analysis (EDA)
+
+The EDA aims to understand the **Breast Cancer Wisconsin Diagnostic Dataset**, identify important features, and uncover patterns that help in classification.
+
+---
+
+### 1️⃣ Dataset Structure
+- **Number of Samples:** 569
+- **Number of Features:** 30 numerical features + 1 target (`diagnosis`)
+- **Target Classes:** Malignant (M) and Benign (B)
+- **No missing values** in the dataset.
+
+```python
+df.info()
+df.describe()
+2️⃣ Missing Value Check
+python
+Copy
+Edit
+df.isnull().sum()
+Result: No missing values detected.
+
+3️⃣ Class Distribution
+python
+Copy
+Edit
+df['diagnosis'].value_counts()
+Malignant: 212 (37%)
+Benign: 357 (63%)
+Dataset is moderately imbalanced but manageable.
+
+📊 Visualization:
+
+python
+Copy
+Edit
+import seaborn as sns
+sns.countplot(x='diagnosis', data=df, palette='Set2')
+4️⃣ Feature Distribution
+Features like mean radius, mean texture, mean concavity show clear separation between malignant and benign tumors.
+Some features have overlapping ranges but still carry discriminative power.
+
+📊 Example:
+python
+Copy
+Edit
+sns.histplot(data=df, x='radius_mean', hue='diagnosis', multiple='stack', palette='Set1')
+
+5️⃣ Correlation Analysis
+Strong positive correlation between radius_mean, perimeter_mean, and area_mean.
+concave points_mean shows a strong positive correlation with malignancy.
+Heatmap reveals clusters of related features.
+
+📊 Correlation Heatmap:
+python
+Copy
+Edit
+import matplotlib.pyplot as plt
+plt.figure(figsize=(12,10))
+sns.heatmap(df.drop('diagnosis', axis=1).corr(), cmap='coolwarm')
+
+6️⃣ PCA Visualization
+PCA reduces the 30-dimensional dataset to 2 components, showing clear class separation.
+
+📊 PCA Plot:
+python
+Copy
+Edit
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+X = df.drop('diagnosis', axis=1)
+y = df['diagnosis']
+
+X_scaled = StandardScaler().fit_transform(X)
+pca = PCA(n_components=2)
+pca_result = pca.fit_transform(X_scaled)
+pca_df = pd.DataFrame(pca_result, columns=['PCA1', 'PCA2'])
+pca_df['diagnosis'] = y
+sns.scatterplot(x='PCA1', y='PCA2', hue='diagnosis', data=pca_df, palette='Set1')
+
+📌 Key Insights
+Malignant tumors tend to have higher radius, perimeter, and concavity values.
+PCA shows strong class separation, indicating that simple models can achieve high accuracy.
+The dataset’s clean structure (no missing values, numeric features) makes it ideal for ML classification.
